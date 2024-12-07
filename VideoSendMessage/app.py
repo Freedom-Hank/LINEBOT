@@ -51,7 +51,7 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, video_message)
     else:
-        message = TextSendMessage("很抱歉，我目前無法理解這個內容。")
+        message = TextSendMessage("抱歉，沒有這類型的影片")
         line_bot_api.reply_message(event.reply_token,message)
 #主程式
 import os
