@@ -41,17 +41,23 @@ def callback():
 #訊息傳遞區塊
 ##### 基本上程式編輯都在這個function #####
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+def handle_message(event):  
     message = text=event.message.text
-    if re.match('告訴我秘密',message):
+    if re.search('心情好',message):
         # 貼圖查詢：https://developers.line.biz/en/docs/messaging-api/sticker-list/#specify-sticker-in-message-object
         sticker_message = StickerSendMessage(
-            package_id='6362',
-            sticker_id='11087924'
+            package_id='446',
+            sticker_id='1991'
         )
         line_bot_api.reply_message(event.reply_token, sticker_message)
-    else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
+    else  if re.search('心情不好',message):
+        # 貼圖查詢：https://developers.line.biz/en/docs/messaging-api/sticker-list/#specify-sticker-in-message-object
+        sticker_message = StickerSendMessage(
+            package_id='446',
+            sticker_id='2020'
+        )
+        line_bot_api.reply_message(event.reply_token, sticker_message)
+
 #主程式
 import os
 if __name__ == "__main__":
