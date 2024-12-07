@@ -11,6 +11,8 @@ from linebot.exceptions import (
 )
 from linebot.models import *
 from datetime import datetime, timedelta  # 用於取得當前時間
+import re
+
 
 app = Flask(__name__)
 
@@ -48,7 +50,7 @@ def callback():
 ##### 基本上程式編輯都在這個function #####
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    user_message = text=event.message.text
+    user_message = event.message.text
     if re.match("天氣",user_message):
         message = TextSendMessage("請稍等，我幫您查詢天氣資訊！")
         line_bot_api.reply_message(event.reply_token,message)
