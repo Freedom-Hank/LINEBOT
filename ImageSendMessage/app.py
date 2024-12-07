@@ -46,8 +46,8 @@ def handle_message(event):
     message = text=event.message.text
     if re.match('今天是我的生日',message):
         image_message = ImageSendMessage(
-            original_content_url='https://www1.pu.edu.tw/~s1100401/500x500.jpg',
-            preview_image_url='https://www1.pu.edu.tw/~s1100401/%E4%B8%8B%E8%BC%89.jpg'
+            original_content_url='https://www1.pu.edu.tw/~s1100401/%E4%B8%8B%E8%BC%89.jpg',
+            preview_image_url='https://www1.pu.edu.tw/~s1100401/500x500.jpg'
         )
         line_bot_api.reply_message(event.reply_token, image_message)
         message=TextSendMessage("生日快樂！願你像奇異博士般，用智慧將每一刻轉化為永恆，讓你的生活故事成為別人的靈感來源")
