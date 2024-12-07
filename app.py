@@ -10,7 +10,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
-from datetime import datetime  # 用於取得當前時間
+from datetime import datetime, timedelta  # 用於取得當前時間
 
 app = Flask(__name__)
 
@@ -20,7 +20,9 @@ line_bot_api = LineBotApi('eeQGzjzKcpLE0NGAbNPph/OKtkvUK4qwusKE2s30VKqkk2YjIs8z6
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('c3155b740fe5557ebb82049435be6ae8')
 
-current_time = datetime.now().strftime("%Y/%m/%d %H:%M")  # 動態生成當前時間
+#取得台灣時間
+utc_now = datetime.now()
+taiwan_time = (utc_now + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M")
 
 line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text=f'您好，目前時間是 {current_time} ，請問需要什麼服務呢?'))
 
