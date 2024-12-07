@@ -50,13 +50,16 @@ def handle_message(event):
             sticker_id='1991'
         )
         line_bot_api.reply_message(event.reply_token, sticker_message)
-    else  if: re.search('心情不好',message):
+    elif re.search('心情不好',message):
         # 貼圖查詢：https://developers.line.biz/en/docs/messaging-api/sticker-list/#specify-sticker-in-message-object
         sticker_message = StickerSendMessage(
             package_id='446',
             sticker_id='2020'
         )
         line_bot_api.reply_message(event.reply_token, sticker_message)
+    else:
+        message = TextSendMessage("很抱歉，我目前無法理解這個內容。")
+        line_bot_api.reply_message(event.reply_token,message)
 
 #主程式
 import os
