@@ -10,7 +10,6 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
-import re
 import os
 import googlemaps  # 用於 Google Maps API
 
@@ -52,7 +51,7 @@ def callback():
 ##### 基本上程式編輯都在這個function #####
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = event.message.text
+    user_message = event.message.text
     # 使用 Google Places API 查詢地點
     places_result = gmaps.places(query=user_message, location=(24.2299, 120.5726), radius=5000)  # 設定查詢範圍為 5 公里
     if places_result['status'] == 'OK' and places_result['results']:
