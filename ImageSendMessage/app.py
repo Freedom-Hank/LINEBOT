@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+
+#載入LineBot所需要的套件
+from flask import Flask, request, abort
+
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.exceptions import (
+    InvalidSignatureError
+)
+from linebot.models import *
+import re
+app = Flask(__name__)
+
+# 必須放上自己的Channel Access Token
+line_bot_api = LineBotApi('eeQGzjzKcpLE0NGAbNPph/OKtkvUK4qwusKE2s30VKqkk2YjIs8z6vcQTLlQ2txu6bRBj7WXBYbdVZ0Es9l1+sj4cHkd0CVyC8PmIjFmGvRohqtnpJ7uJKAE+4rERncihjErfjsUnQJp/jsE1fqmrAdB04t89/1O/w1cDnyilFU=')
+
+# 必須放上自己的Channel Secret
+handler = WebhookHandler('c3155b740fe5557ebb82049435be6ae8')
+
+line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text='你可以開始了'))
+
+# 監聽所有來自 /callback 的 Post Request
+@app.route("/callback", methods=['POST'])
+def callback():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+
+    return 'OK'
+
+#訊息傳遞區塊
+##### 基本上程式編輯都在這個function #####
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    message = text=event.message.text
+    if re.match('今天是我的生日',message):
+        image_message = ImageSendMessage(
+            original_content_url='https://www1.pu.edu.tw/~s1100401/500x500.jpg',
+            preview_image_url='https://www1.pu.edu.tw/~s1100401/%E4%B8%8B%E8%BC%89.jpg'
+        )
+        line_bot_api.reply_message(event.reply_token, image_message)
+        message=TextSendMessage("生日快樂！願你像奇異博士般，用智慧將每一刻轉化為永恆，讓你的生活故事成為別人的靈感來源")
+        line_bot_api.reply_message(event.reply_token, message)
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
+#主程式
+import os
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
