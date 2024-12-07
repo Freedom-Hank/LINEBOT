@@ -10,6 +10,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import *
+from datetime import datetime  # 用於取得當前時間
 
 app = Flask(__name__)
 
@@ -19,7 +20,9 @@ line_bot_api = LineBotApi('eeQGzjzKcpLE0NGAbNPph/OKtkvUK4qwusKE2s30VKqkk2YjIs8z6
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('c3155b740fe5557ebb82049435be6ae8')
 
-line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text='你可以開始了'))
+current_time = datetime.now().strftime("%Y/%m/%d %H:%M")  # 動態生成當前時間
+
+line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text=f'您好，目前時間是 {current_time} ，請問需要什麼服務呢?'))
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -43,8 +46,13 @@ def callback():
 ##### 基本上程式編輯都在這個function #####
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token,message)
+    user_message = text=event.message.text
+    if re.match("天氣",user_message):
+        message = TextSendMessage("請稍等，我幫您查詢天氣資訊！")
+        line_bot_api.reply_message(event.reply_token,message)
+    else:
+        message = TextSendMessage("很抱歉，我目前無法理解這個內容。")
+        line_bot_api.reply_message(event.reply_token,message)
 
 #主程式
 import os
