@@ -24,7 +24,7 @@ handler = WebhookHandler('c3155b740fe5557ebb82049435be6ae8')
 utc_now = datetime.now()
 taiwan_time = (utc_now + timedelta(hours=8)).strftime("%Y/%m/%d %H:%M")
 
-line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text=f'您好，目前時間是 {current_time} ，請問需要什麼服務呢?'))
+line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(text=f'您好，目前時間是 {taiwan_time} ，請問需要什麼服務呢?'))
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
