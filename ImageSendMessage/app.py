@@ -46,14 +46,17 @@ def handle_message(event):
     message = text=event.message.text
     if re.match('今天是我的生日',message):
         image_message = ImageSendMessage(
-            original_content_url='https://www1.pu.edu.tw/~s1100401/%E4%B8%8B%E8%BC%89.jpg',
-            preview_image_url='https://www1.pu.edu.tw/~s1100401/500x500.jpg'
+            original_content_url='https://www1.pu.edu.tw/~s1100401/500x500.jpg',
+            preview_image_url='https://www1.pu.edu.tw/~s1100401/1234.jpeg'
         )
-        line_bot_api.reply_message(event.reply_token, image_message)
-        message=TextSendMessage("生日快樂！願你像奇異博士般，用智慧將每一刻轉化為永恆，讓你的生活故事成為別人的靈感來源")
-        line_bot_api.reply_message(event.reply_token, message)
+        text_message=TextSendMessage("生日快樂！願你像奇異博士般，用智慧將每一刻轉化為永恆，讓你的生活故事成為別人的靈感來源")
+        line_bot_api.reply_message(
+            event.reply_token,
+            [image_message, text_message]
+        )
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
+
 #主程式
 import os
 if __name__ == "__main__":
