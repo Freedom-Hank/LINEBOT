@@ -46,30 +46,30 @@ def handle_message(event):
     message = text=event.message.text
     if re.match('告訴我秘密',message):
         imagemap_message = ImagemapSendMessage(
-            base_url='https://i.imgur.com/xMUKNtn.jpg',
+            base_url='https://i.imgur.com/tTeEiaA.jpeg',
             alt_text='組圖訊息',
             base_size=BaseSize(height=2000, width=2000),
             actions=[
                 URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Cebu',
+                    link_uri='https://maps.app.goo.gl/AjExg8SDkMwdUrFz5',
                     area=ImagemapArea(
                         x=0, y=0, width=1000, height=1000
                     )
                 ),
                 URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Taipei',
+                    link_uri='https://maps.app.goo.gl/MNydKYpuxmXwjKV76',
                     area=ImagemapArea(
                         x=1000, y=0, width=1000, height=1000
                     )
                 ),
                 URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Osaka',
+                    link_uri='https://maps.app.goo.gl/r5XLkfTHSP1A2Yri6',
                     area=ImagemapArea(
                         x=0, y=1000, width=1000, height=1000
                     )
                 ),
                 URIImagemapAction(
-                    link_uri='https://en.wikipedia.org/wiki/Shanghai',
+                    link_uri='https://maps.app.goo.gl/8uxWZ8EmbLiALEZa6',
                     area=ImagemapArea(
                         x=1000, y=1000, width=1000, height=1000
                     )
