@@ -70,7 +70,7 @@ def fetch_course_info(selectno: int):
             f"科目名稱: {course['科目名稱']}\n"
             f"人數上限: {course.get('人數上限', '未知')}\n"
             f"修課人數: {course.get('修課人數', '未知')}\n"
-            f"人數餘額: {course['人數餘額']}\n"
+            f"人數餘額: {course['人數餘額']}"
         )
 
     except Exception as e:
