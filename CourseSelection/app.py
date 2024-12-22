@@ -100,18 +100,29 @@ def callback():
 def handle_message(event):
     user_message = event.message.text.strip()  # 使用者輸入的文字
 
-    # 確認是否是選課代碼（假設是數字）
-    if user_message.isdigit():
-        response = fetch_course_info(int(user_message))  # 爬取資料
+    # 分析多個選課代碼
+    course_codes = [code.strip() for code in user_message.split() if code.isdigit()]
+
+    if not course_codes:
+        # 如果沒有有效代碼
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=response)
+            TextSendMessage(text="請輸入有效的選課代碼（例如: 2876 2886）。")
         )
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="請輸入有效的選課代碼（例如: 2876）。")
-        )
+        return
+
+    # 查詢所有選課代碼
+    results = []
+    for code in course_codes:
+        response = fetch_course_info(int(code))
+        results.append(f"選課代碼: {code}\n{response}\n{'-'*30}")
+
+    # 回應查詢結果
+    reply_message = "\n".join(results)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_message)
+    )
 
 #主程式
 import os
