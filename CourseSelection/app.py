@@ -48,7 +48,7 @@ def fetch_course_info(selectno: int):
         course = {
             "科目名稱": course_name_tag.text.replace('科目名稱：', '').strip(),
             "人數上限": None,
-            "一階選上人數": None,
+            "修課人數": None,
             "人數餘額": None
         }
 
@@ -59,19 +59,17 @@ def fetch_course_info(selectno: int):
             if len(cells) == 2:
                 key = cells[0].text.strip()
                 value = cells[1].text.strip()
-                if key == "人數上限":
-                    course["人數上限"] = int(value)
-                elif key == "一階選上人數":
-                    course["一階選上人數"] = int(value)
+                if key in course:
+                    course[key] = value
 
         # 計算餘額
-        if course["人數上限"] is not None and course["一階選上人數"] is not None:
-            course["人數餘額"] = course["人數上限"] - course["一階選上人數"]
+        if course["人數上限"] is not None and course["修課人數"] is not None:
+            course["人數餘額"] = course["人數上限"] - course["修課人數"]
 
         return (
             f"科目名稱: {course['科目名稱']}\n"
             f"人數上限: {course.get('人數上限', '未知')}\n"
-            f"一階選上人數: {course.get('一階選上人數', '未知')}\n"
+            f"修課人數: {course.get('修課人數', '未知')}\n"
             f"人數餘額: {course['人數餘額']}\n"
         )
 
