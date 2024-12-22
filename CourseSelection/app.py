@@ -26,7 +26,10 @@ line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(t
 def fetch_course_info(selectno: int):
     try:
         url = 'https://alcat.pu.edu.tw/choice/q_person.php'
-        response = requests.post(url, data={'selectno': selectno})
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        response = requests.post(url, data={'selectno': selectno}, headers=headers, timeout=10)
 
         if response.status_code != 200:
             return f"伺服器回應錯誤，無法取得資料 (狀態碼: {response.status_code})"
@@ -38,10 +41,7 @@ def fetch_course_info(selectno: int):
             return "找不到科目名稱，請確認選課代碼是否正確。"
 
         course = {
-            "科目名稱": course_name_tag.text.replace('科目名稱：', '').strip(),
-            "人數上限": None,
-            "修課人數": None,
-            "人數餘額": None
+            "科目名稱": course_name_tag.text.replace('科目名稱：', '').strip()
         }
 
         rows = soup.find_all('tr')
@@ -53,20 +53,21 @@ def fetch_course_info(selectno: int):
                 if key in course:
                     course[key] = value
 
-        try:
-            course["人數餘額"] = int(course["人數上限"]) - int(course["修課人數"])
-        except (TypeError, ValueError):
-            return "人數資料計算有誤，可能來源資料不完整。"
+        # 確保鍵值存在後計算人數餘額
+        if "人數上限" in course and "一階選上人數" in course:
+            course["人數餘額"] = int(course["人數上限"]) - int(course["一階選上人數"])
+        else:
+            course["人數餘額"] = "無法計算（資料不完整）"
 
         return (
             f"科目名稱: {course['科目名稱']}\n"
-            f"人數上限: {course['人數上限']}\n"
-            f"修課人數: {course['修課人數']}\n"
-            f"人數餘額: {course['人數餘額']}"
+            f"人數上限: {course.get('人數上限', '未知')}\n"
+            f"一階選上人數: {course.get('一階選上人數', '未知')}\n"
+            f"人數餘額: {course['人數餘額']}\n"
         )
 
     except Exception as e:
-        return f"發生錯誤：{e}"
+        return f"選課代碼 {selectno}：發生錯誤：{e}"
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
