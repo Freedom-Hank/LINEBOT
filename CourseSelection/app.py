@@ -24,6 +24,9 @@ line_bot_api.push_message('U08e0b3334851a188dac8149bd83e74a0', TextSendMessage(t
 
 # 爬蟲
 def fetch_course_info(selectno: int):
+    """
+    根據選課代碼爬取課程資訊
+    """
     try:
         url = 'https://alcat.pu.edu.tw/choice/q_person.php'
         headers = {
@@ -32,32 +35,38 @@ def fetch_course_info(selectno: int):
         response = requests.post(url, data={'selectno': selectno}, headers=headers, timeout=10)
 
         if response.status_code != 200:
-            return f"伺服器回應錯誤，無法取得資料 (狀態碼: {response.status_code})"
+            return f"伺服器回應錯誤，狀態碼: {response.status_code}"
 
         soup = BeautifulSoup(response.text, "html.parser")
-        course_name_tag = soup.find('h2', string=lambda text: text and '科目名稱：' in text)
 
+        # 找到科目名稱
+        course_name_tag = soup.find('h2', string=lambda text: text and '科目名稱：' in text)
         if not course_name_tag:
             return "找不到科目名稱，請確認選課代碼是否正確。"
 
+        # 初始化課程資訊
         course = {
-            "科目名稱": course_name_tag.text.replace('科目名稱：', '').strip()
+            "科目名稱": course_name_tag.text.replace('科目名稱：', '').strip(),
+            "人數上限": None,
+            "一階選上人數": None,
+            "人數餘額": None
         }
 
+        # 提取表格數據
         rows = soup.find_all('tr')
         for row in rows:
             cells = row.find_all('td')
             if len(cells) == 2:
                 key = cells[0].text.strip()
                 value = cells[1].text.strip()
-                if key in course:
-                    course[key] = value
+                if key == "人數上限":
+                    course["人數上限"] = int(value)
+                elif key == "一階選上人數":
+                    course["一階選上人數"] = int(value)
 
-        # 確保鍵值存在後計算人數餘額
-        if "人數上限" in course and "一階選上人數" in course:
-            course["人數餘額"] = int(course["人數上限"]) - int(course["一階選上人數"])
-        else:
-            course["人數餘額"] = "無法計算（資料不完整）"
+        # 計算餘額
+        if course["人數上限"] is not None and course["一階選上人數"] is not None:
+            course["人數餘額"] = course["人數上限"] - course["一階選上人數"]
 
         return (
             f"科目名稱: {course['科目名稱']}\n"
@@ -67,7 +76,7 @@ def fetch_course_info(selectno: int):
         )
 
     except Exception as e:
-        return f"選課代碼 {selectno}：發生錯誤：{e}"
+        return f"選課代碼 {selectno} 發生錯誤：{e}"
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
