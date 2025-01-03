@@ -59,8 +59,10 @@ def fetch_course_info(selectno: int):
             if len(cells) == 2:
                 key = cells[0].text.strip()
                 value = cells[1].text.strip()
-                if key in course:
-                    course[key] = value
+                if key == "人數上限":
+                   course["人數上限"] = int(value) if value.isdigit() else None
+                elif key == "修課人數":
+                    course["修課人數"] = int(value) if value.isdigit() else None
 
         # 計算餘額
         if course["人數上限"] is not None and course["修課人數"] is not None:
